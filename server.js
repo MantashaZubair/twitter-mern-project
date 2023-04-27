@@ -28,7 +28,7 @@ app.use(express.json())
 //to serve images folder
 app.use(express.static('public'))
 app.use("/images", express.static("images"))
-app.use(express.static(path.join(__dirname,'./client/build')))
+app.use(express.static(path.join(__dirname,'../client/build')))
 
 //routes
 app.use('/api/v1/auth', authRoutes)
@@ -39,7 +39,7 @@ app.use('/api/v1/upload',uploadRoutes)
 //rest api
 
 app.use("*",function(req,res){
-    res.sendFile(path.join(__dirname,'./client/build/index.html'));
+    res.sendFile(path.join(__dirname,'../client/build/index.html'));
 })
 
 //PORT
