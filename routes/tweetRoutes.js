@@ -1,9 +1,12 @@
 const express = require("express")
-const {createTweetController,updatetweetController,deletetweetController,likeTweetController,getAllTimelineController,getTweetController, getExploreTweets,commentTweetController} = require("../controllers/tweetController")
+const {createTweetController,ImageTweetController,updatetweetController,deletetweetController,likeTweetController,getAllTimelineController,getTweetController, getExploreTweets,commentTweetController} = require("../controllers/tweetController")
 const { requireSignin } = require("../middleware/authMiddleware")
+const singleUpload = require("../middleware/multer")
 const router = express.Router()
 //create Tweet
 router.post("/create-tweet",requireSignin,createTweetController)
+//image
+ router.post("/upload",requireSignin,singleUpload,ImageTweetController)
 
 //get a tweet
 router.get("/get-tweet/:id",getTweetController)

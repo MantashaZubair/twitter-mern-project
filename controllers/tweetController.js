@@ -1,11 +1,14 @@
 const tweetModel = require("../models/tweetModel")
 const userModels = require("../models/userModels")
+const getDataUri = require("../utils/dataUri")
+const cloudnary =require("cloudinary")
 
 
 //create tweet controller
 const createTweetController = async(req,res)=>{
-const newTweet = new tweetModel(req.body)
 try {
+    const {content,userId} = req.body
+    const newTweet = new tweetModel({content,userId})
    await newTweet.save()
   res.status(200).send({
     success:true,
@@ -22,6 +25,58 @@ try {
 }
 }
 
+
+
+//  const createTweetController = async(req,res)=>{
+// try {
+//     const {content,userId} = req.body
+//     if(!content||!userId)
+//      return res.status(400).json({messsage:"content is empty"})
+
+//      const file = req.file;
+//      const fileUri=getDataUri(file)
+   
+//      const mycloud = await cloudnary.v2.uploader.upload(fileUri.content)
+//      const newTweet = new tweetModel({content,userId,image:{public_id:mycloud.public_id,url:mycloud.secure_url}})
+//    await newTweet.save()
+//   res.status(200).send({
+//     success:true,
+//     message:"saved tweet",
+//     newTweet
+//   })  
+// } catch (error) {
+//     console.log(error)
+//     res.status(500).send({
+//         success:false,
+//         message:"Something went worng while creating tweet",
+//         error
+//       })
+// }
+// }
+const ImageTweetController = async(req,res)=>{
+    try {
+        const {content,userId} = req.body
+             if(!content||!userId)
+          return res.status(400).json({messsage:"content is empty"})
+         const file = req.file;
+         const fileUri=getDataUri(file)
+         const mycloud = await cloudnary.v2.uploader.upload(fileUri.content)
+         const newTweet = new tweetModel({content,userId,photo:mycloud.secure_url})
+       await newTweet.save()
+      res.status(200).send({
+        success:true,
+        message:"saved tweet",
+        newTweet
+      })  
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            success:false,
+            message:"Something went worng while creating tweet",
+            error
+          })
+    }
+    }
 //get a tweet controller
 const getTweetController = async(req,res)=>{
     
@@ -75,7 +130,6 @@ const updatetweetController = async(req,res)=>{
 const deletetweetController = async(req,res)=>{
     
 try {
-   
    const data = await tweetModel.findById(req.params.id)
    if(data.userId){
     await data.deleteOne();
@@ -190,4 +244,4 @@ const getExploreTweets = async(req,res)=>{
 }
 
 
-module.exports={createTweetController,getTweetController,updatetweetController,deletetweetController, likeTweetController, getAllTimelineController,getExploreTweets,commentTweetController}
+module.exports={createTweetController,ImageTweetController,getTweetController,updatetweetController,deletetweetController, likeTweetController, getAllTimelineController,getExploreTweets,commentTweetController}

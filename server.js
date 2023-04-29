@@ -6,9 +6,7 @@ const connectDB = require("./config/db")
 const authRoutes = require("./routes/authRoutes")
 const userRoutes = require("./routes/userRoutes")
 const tweetRoutes = require("./routes/tweetRoutes")
-const uploadRoutes = require("./routes/uploadRoutes")
-const path = require("path")
-
+const cloudnary =require("cloudinary")
 
 //configuire env
 dotenv.config() 
@@ -28,23 +26,21 @@ app.use(express.json())
 //to serve images folder
 app.use(express.static('public'))
 app.use("/images", express.static("images"))
-app.use(express.static(path.join(__dirname,'./client/build')))
+
+//cloudnary
+cloudnary.v2.config({
+    cloud_name: process.env.CLOUDNARY_CLIENT_NAME,
+    api_key: process.env.CLOUDNARY_CLIENT_API,
+    api_secret: process.env.CLOUDNARY_CLIENT_SECERT,
+})
 
 //routes
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/user', userRoutes)
 app.use('/api/v1/tweet', tweetRoutes)
-app.use('/api/v1/upload',uploadRoutes)
-
-//rest api
-
-app.use("*",function(req,res){
-    res.sendFile(path.join(__dirname,'./client/build/index.html'));
-})
-
 //PORT
 const PORT =process.env.PORT||8080;
 
 app.listen(PORT,()=>{
-    console.log(`server running on port ${PORT}`.bgCyan.white)
+    console.log(`server running on ${process.env.DEV_MODE} mode on port ${PORT}`.bgCyan.white)
 })
